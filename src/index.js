@@ -31,7 +31,7 @@ client.on('interactionCreate', async  interaction => {
 
         await interaction.reply({content:`${warned_user.tag} has been warned by ${interaction.user.tag} for the reason ${reason}`, ephemeral: true})
         await interaction.followUp({ content:'admins have been notified of your issue', ephemeral: true})
-             .then ( async penis => {
+             .then ( async () => {
              await client.guilds.cache.get(guildId).channels.create({
                  name: `${interaction.user.username} issue`,
                  type: 0
@@ -50,7 +50,7 @@ client.on('interactionCreate', async  interaction => {
 
     }
 
-    if (commandName === ban){
+    if (commandName === 'ban'){
         const user = await interaction.options('user')
         await client.guilds.cache.get(guildId).members.ban(user)
         interaction.reply(`${user.tag} has been banned`)
