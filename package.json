@@ -1,0 +1,19 @@
+{
+  "name": "discord_js_mod_bot",
+  "version": "1.0.0",
+  "description": "discord js bot",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "toby reay",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^4.3.1",
+    "discord.js": "^14.4.0",
+    "dotenv": "^16.0.2"
+  },
+  "devDependencies": {
+    "prisma": "^4.3.1"
+  }
+}
