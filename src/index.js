@@ -1,16 +1,47 @@
  const { PrismaClient } =  require('@prisma/client')
-const { Client, GatewayIntentBits, userMention, User, GuildChannelManager} = require('discord.js');
+const { Client, GatewayIntentBits, userMention, User, GuildChannelManager, GuildMessages, MessageContent} = require('discord.js');
 const { token, guildId } = require('../config.json');
 
 
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-// const prisma = new PrismaClient()
+
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent], partials: ['MESSAGE'] });
+const prisma = new PrismaClient()
 
 client.once('ready', () => {
     console.log('Ready!');
 });
 
+ client.on('messageCreate',  async  (message) => {
+    const messageContent = message.content
+     const messagesId = message.id
+        try {const poop = await prisma.messages.create({
+         data: {
+             author: `${message.author.username}` ,
+             messageID: `${messagesId}`,
+             contents: `${messageContent}`
+
+
+         }
+     })}
+     catch (error){
+        console.log(error)
+     }
+
+ });
+
+ client.on('messageDelete', async(message) => {
+     const deletedMessageChannel = await client.channels.cache.get('1024730889982316554')
+     const DeltedMessageID = message.id
+     const result =  await prisma.messages.findUnique({
+         where: {
+             messageID: `${DeltedMessageID}`
+         }
+     })
+     await deletedMessageChannel.send(`a message has just been deleted by: ${result.author} the message contents read: ${result.contents}`)
+
+
+ })
 
 
 client.on('interactionCreate', async  interaction => {
@@ -19,7 +50,7 @@ client.on('interactionCreate', async  interaction => {
 
     const { commandName } = interaction
 
-    // await prisma.$connect()
+
 
     if (commandName === 'ping') {
         interaction.reply(`ping: ${client.ws.ping}ms`)
@@ -37,6 +68,16 @@ client.on('interactionCreate', async  interaction => {
                  type: 0
                  })
              })
+        try {const poop = await prisma.report.create({
+            data: {
+                userID: `${warned_user.id}`,
+                reason: `${reason}`
+            }
+        })}
+        catch (error) {
+            console.log(error)
+        }
+
 
         await adminChannel.send(`${warned_user.tag} has been warned fat admin bastards attack for ${reason}`)
 
@@ -55,15 +96,16 @@ client.on('interactionCreate', async  interaction => {
         await client.guilds.cache.get(guildId).members.ban(user)
         interaction.reply(`${user.tag} has been banned`)
     }
-})
+});
+
 
 // Login to Discord with your client's token
 client.login(token)
-    // .then(async (e) => {
-    // await prisma.$disconnect()
-    // })
-    // .catch(async  (e) => {
-    //     console.error(e)
-    //     await prisma.$disconnect()
-    //     process.exit(1)
-    // });
+    .then(async (e) => {
+    await prisma.$disconnect()
+     })
+     .catch(async  (e) => {
+        console.error(e)
+         await prisma.$disconnect()
+       process.exit(1)
+    });

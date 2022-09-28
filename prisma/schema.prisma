@@ -7,15 +7,22 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env()
+  provider = "mysql"
+  url      = "mysql://root@localhost:3306/discordjs"
 }
 
 
+model report {
+    userID String @unique
+    reason String
+    DateTime DateTime @default(now())
 
-model Report {
-    id   String @id @map("_id")
-    reason String?
+}
+model messages {
+    messageID String @unique
+    contents String
+    author String
+
 
 }
 
