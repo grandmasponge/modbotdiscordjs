@@ -22,7 +22,5 @@ model messages {
     messageID String @unique
     contents String
     author String
-
-
 }
 
